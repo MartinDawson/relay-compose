@@ -17,6 +17,7 @@ const invariant = () => {
 };
 
 export const setEnviroment = env => environment = env;
+export const getEnvironment = () => environment;
 
 export const queryRenderer = (rootQuery, variables) =>
   Component => class RelayRoot extends React.Component {
