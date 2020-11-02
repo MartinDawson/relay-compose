@@ -1,6 +1,6 @@
 {
-  "name": "relay-modern-hoc",
-  "version": "1.0.0",
+  "name": "relay-compose",
+  "version": "2.2.0",
   "description": "This is HOC for relay modern to work with сomposable components.",
   "main": "./lib/index.js",
   "scripts": {
@@ -27,7 +27,7 @@
   "homepage": "https://github.com/MartinDawson/relay-compose#readme",
   "peerDependencies": {
     "react": "^15.0.0 || ^16.0.0",
-    "react-relay": "^1.0.0"
+    "react-relay": "^1.0.0 || ^2.0.0"
   },
   "devDependencies": {
     "babel-cli": "^6.24.1",

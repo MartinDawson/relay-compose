@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 import {
   QueryRenderer,
   createFragmentContainer,
@@ -6,34 +6,43 @@ import {
   createRefetchContainer,
   createPaginationContainer,
   requestSubscription,
-} from 'react-relay';
+} from "react-relay";
 
 let environment;
 
 const invariant = () => {
   if (!environment) {
-    throw new Error('Relay environment has not been declared.');
+    throw new Error("Relay environment has not been declared.");
   }
 };
 
-export const setEnviroment = env => environment = env;
-export const getEnvironment = () => environment;
+// leave this one because by the time we found this typo the lib had been installed by many people.
+// So to not break peoples' apps just leave this for noe.
+export const setEnviroment = (env) => (environment = env);
+export const setEnvironment = (env) => (environment = env);
 
-export const queryRenderer = (rootQuery, variables) =>
-  Component => class RelayRoot extends React.Component {
-    static displayName = `RelayRoot(${Component.displayName})`
+export const fragment = (query) => (Component) =>
+  createFragmentContainer((props) => <Component {...props} />, query);
+
+export const paginationContainer = (query, connectionConfig) => (Component) =>
+  createPaginationContainer(Component, query, connectionConfig);
+
+export const queryRenderer = (rootQuery, variables) => (Component) =>
+  class RelayRoot extends React.Component {
+    static displayName = `RelayRoot(${Component.displayName})`;
 
     render() {
       invariant();
 
-      const vars = typeof variables === 'function' ? variables(this.props) : variables;
+      const vars =
+        typeof variables === "function" ? variables(this.props) : variables;
 
       return (
         <QueryRenderer
           environment={environment}
           query={rootQuery}
           variables={vars}
-          render={({ error, props }) => {
+          render={({ error, props, retry }) => {
             if (!props && !error) {
               return null;
             }
@@ -43,64 +52,47 @@ export const queryRenderer = (rootQuery, variables) =>
                 {...props}
                 {...this.props}
                 error={error}
+                retry={retry}
               />
             );
           }}
         />
       );
-  }
-};
+    }
+  };
 
-export const fragmentContainer = query => Component => createFragmentContainer(
-  props => <Component {...props} />,
-  query,
-);
+export const fragmentContainer = (query) => (Component) =>
+  createFragmentContainer((props) => <Component {...props} />, query);
 
-export const paginationContainer = (query, connectionConfig) => Component => createPaginationContainer(
-  Component,
-  query,
-  connectionConfig,
-);
+export const paginationContainer = (query, connectionConfig) => (Component) =>
+  createPaginationContainer(Component, query, connectionConfig);
 
-export const refetchContainer = (renderVariables, query) => Component => createRefetchContainer(
-  Component,
-  renderVariables,
-  query,
-);
+export const refetchContainer = (renderVariables, query) => (Component) =>
+  createRefetchContainer(Component, renderVariables, query);
 
-export const createMutation = (
-  mutation,
-  variables,
-  optimisticResponse,
-  optimisticUpdater,
-  updater,
-) => new Promise((res, rej) => {
-  invariant();
+export const createMutation = (mutation, config) =>
+  new Promise((res, rej) => {
+    invariant();
 
-  commitMutation(
-    environment,
-    {
+    commitMutation(environment, {
       mutation,
-      variables,
-      onCompleted: res,
+      onCompleted: (result, errors) => {
+        if (errors) {
+          return rej(errors);
+        }
+
+        res(result);
+      },
       onError: rej,
-      optimisticResponse,
-      optimisticUpdater,
-      updater,
-    },
-  );
-});
+      ...config,
+    });
+  });
 
-export const createSubscription = (
-  subscription,
-  variables,
-  config,
-) => new Promise((res, rej) => {
-  invariant();
+export const createSubscription = (subscription, variables, config) =>
+  new Promise((res, rej) => {
+    invariant();
 
-  requestSubscription(
-    environment,
-    {
+    requestSubscription(environment, {
       subscription,
       variables,
       onCompleted: (result, errors) => {
@@ -112,6 +104,5 @@ export const createSubscription = (
       },
       onError: rej,
       ...config,
-    },
-  );
-});
+    });
+  });
