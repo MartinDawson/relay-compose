@@ -8,49 +8,46 @@ You probably want to use this when you work with smart and dumb components and y
 
 `npm install --save relay-compose`
 
-Set relay [environment](https://facebook.github.io/relay/docs/relay-environment.html) using `setEnvironment` in your enty point. For example in `client.js`:
+Set relay [environment](https://facebook.github.io/relay/docs/relay-environment.html) using `setEnvironment` in your entry point. For example in `client.js`:
 
 ```js
-import { setEnviroment } from 'relay-compose';
-import relayEnv from './createRelayEnvironment'
+import { setEnvironment } from "relay-compose";
+import relayEnv from "./createRelayEnvironment";
 
-setEnviroment(relayEnv);
+setEnvironment(relayEnv);
 ```
 
 And now you are ready to use it.
 
 # Examples
+
 ## FragmentContainer
 
 ```js
-import {
-  graphql,
-} from 'react-relay';
-import { fragmentContainer } from 'relay-compose';
+import { graphql } from "react-relay";
+import { fragment } from "relay-compose";
 
-import Persons from './Persons';
+import Persons from "./Persons";
 
 export default compose(
-  fragmentContainer(graphql`
+  fragment(graphql`
     fragment PersonsContainerDesc on Person @relay(plural: true) {
       id
       title
     }
   `),
-  connect(mapProps, mapDispatch, mergeProps),
+  connect(mapProps, mapDispatch, mergeProps)
 )(Persons);
 ```
 
 ## Query renderer(root)
 
 ```js
-import {
-  graphql,
-} from 'react-relay';
-import { queryRenderer } from 'relay-compose';
+import { graphql } from "react-relay";
+import { queryRenderer } from "relay-compose";
 
-import PersonsInfoPage from './PersonsInfoPage';
-import { PersonsContainer } from '../Persons';
+import PersonsInfoPage from "./PersonsInfoPage";
+import { PersonsContainer } from "../Persons";
 
 export default compose(
   queryRenderer(graphql`
@@ -60,9 +57,9 @@ export default compose(
       }
     }
   `),
-  mapProps(props => ({
+  mapProps((props) => ({
     persons: <PersonsContainer data={props.Person} />,
-  })),
+  }))
 )(PersonsInfoPage);
 ```
 
@@ -80,7 +77,15 @@ export default compose(
             clientMutationId
           }
         }
-      `, { input: data }).then(res => console.log(res);
+      `, {
+        variables: {
+          input: data,
+        },
+        configs: [{
+          type: 'RANGE_ADD',
+          ...myConfig,
+        }],
+      }).then(res => console.log(res);
     },
   })),
   reduxForm({
@@ -92,7 +97,7 @@ export default compose(
 ## RefetchContainer
 
 ```js
-import { queryRenderer, refetchContainer } from 'relay-compose';
+import { queryRenderer, refetchContainer } from "relay-compose";
 
 export default compose(
   queryRenderer(graphql`
@@ -106,9 +111,7 @@ export default compose(
     {
       viewer: graphql.experimental`
         fragment Test_viewer on User
-        @argumentDefinitions(
-          name: { type: String }
-        ) {
+        @argumentDefinitions(name: { type: String }) {
           id
           firstName
           lastName
@@ -121,8 +124,8 @@ export default compose(
           ...Test_viewer @arguments(name: $name)
         }
       }
-    `,
-  ),
+    `
+  )
 )(Test);
 ```
 
@@ -177,11 +180,11 @@ export default compose(
 )(Test);
 ```
 
-
 ## Subscriptions
+
 ```js
-import { graphql } from 'react-relay';
-import { createSubscription } from 'relay-compose';
+import { graphql } from "react-relay";
+import { createSubscription } from "relay-compose";
 
 const subscription = graphql`
   subscription UnreadMessageNotificationSubscription($input: String) {
@@ -201,4 +204,5 @@ export default {
 ```
 
 # Information
+
 This project is still in WIP. You are welcome to participate to it.
