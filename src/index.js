@@ -24,42 +24,48 @@ export const setEnvironment = (env) => (environment = env);
 export const fragment = (query) => (Component) =>
   createFragmentContainer((props) => <Component {...props} />, query);
 
-export const paginationContainer = (query, connectionConfig) => (Component) =>
-  createPaginationContainer(Component, query, connectionConfig);
+export const queryRenderer = (
+  rootQuery,
+  variables,
+  LoadingComponent,
+  loadingComponentProps = {},
+) => (Component) =>
+    class RelayRoot extends React.Component {
+      static displayName = `RelayRoot(${Component.displayName})`;
 
-export const queryRenderer = (rootQuery, variables) => (Component) =>
-  class RelayRoot extends React.Component {
-    static displayName = `RelayRoot(${Component.displayName})`;
+      render() {
+        invariant();
 
-    render() {
-      invariant();
+        const vars =
+          typeof variables === "function" ? variables(this.props) : variables;
 
-      const vars =
-        typeof variables === "function" ? variables(this.props) : variables;
+        return (
+          <QueryRenderer
+            environment={environment}
+            query={rootQuery}
+            variables={vars}
+            render={({ error, props, retry }) => {
+              if (!props && !error) {
+                const toRenderDuringLoading = LoadingComponent
+                  ? <LoadingComponent {...loadingComponentProps} />
+                  : null;
 
-      return (
-        <QueryRenderer
-          environment={environment}
-          query={rootQuery}
-          variables={vars}
-          render={({ error, props, retry }) => {
-            if (!props && !error) {
-              return null;
-            }
+                return toRenderDuringLoading;
+              }
 
-            return (
-              <Component
-                {...props}
-                {...this.props}
-                error={error}
-                retry={retry}
-              />
-            );
-          }}
-        />
-      );
-    }
-  };
+              return (
+                <Component
+                  {...props}
+                  {...this.props}
+                  error={error}
+                  retry={retry}
+                />
+              );
+            }}
+          />
+        );
+      }
+    };
 
 export const fragmentContainer = (query) => (Component) =>
   createFragmentContainer((props) => <Component {...props} />, query);
