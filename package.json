@@ -1,5 +1,5 @@
 {
-  "name": "relay-compose",
+  "name": "@everestate/relay-compose",
   "version": "2.2.1",
   "description": "This is HOC for relay modern to work with сomposable components.",
   "main": "./lib/index.js",
