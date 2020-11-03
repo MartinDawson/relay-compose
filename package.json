@@ -11,7 +11,7 @@
     "type": "git",
     "url": "git+https://github.com/MartinDawson/relay-compose.git"
   },
-  "author": "Ven Korolev, Martin Dawson",
+  "author": "Ven Korolev, Everestate",
   "license": "MIT",
   "keywords": [
     "react",
@@ -22,9 +22,9 @@
     "relay-compose"
   ],
   "bugs": {
-    "url": "https://github.com/MartinDawson/relay-compose/issues"
+    "url": "https://github.com/everestate/relay-compose/issues"
   },
-  "homepage": "https://github.com/MartinDawson/relay-compose#readme",
+  "homepage": "https://github.com/everestate/relay-compose#readme",
   "peerDependencies": {
     "react": "^15.0.0 || ^16.0.0",
     "react-relay": "^1.0.0 || ^2.0.0"
